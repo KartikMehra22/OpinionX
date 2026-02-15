@@ -1,8 +1,6 @@
 const passport = require("passport");
+const prisma = require("./prisma");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient();
 
 passport.use(
     new GoogleStrategy(

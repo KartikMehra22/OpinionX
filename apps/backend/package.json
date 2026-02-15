@@ -14,7 +14,6 @@
   "license": "ISC",
   "packageManager": "pnpm@10.29.3",
   "dependencies": {
-    "@prisma/client": "5.4.2",
     "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -28,7 +27,8 @@
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
+    "@prisma/client": "5.22.0",
     "nodemon": "^3.1.11",
-    "prisma": "5.4.2"
+    "prisma": "5.22.0"
   }
 }
