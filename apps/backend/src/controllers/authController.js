@@ -56,9 +56,14 @@ const refresh = (req, res) => {
     });
 };
 
+const getMe = (req, res) => {
+    res.json(req.user);
+};
+
 module.exports = {
     googleAuth,
     googleCallback,
     logout,
-    refresh
+    refresh,
+    getMe
 };
