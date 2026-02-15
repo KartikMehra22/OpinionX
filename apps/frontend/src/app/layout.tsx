@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import { AuthProvider } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-blue-50/50`}
       >
         <AuthProvider>
+          <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
           <Navbar />
           <main className="pt-16 min-h-screen">
             {children}

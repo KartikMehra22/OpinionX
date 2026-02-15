@@ -3,9 +3,20 @@
 import { useAuth } from "../../context/AuthContext";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, Suspense } from "react";
+import toast from "react-hot-toast";
 
-export default function Login() {
+function LoginContent() {
     const { login } = useAuth();
+    const searchParams = useSearchParams();
+    const error = searchParams.get("error");
+
+    useEffect(() => {
+        if (error === "auth_failed") {
+            toast.error("Authentication failed. Please try again.");
+        }
+    }, [error]);
 
     return (
         <div className="flex items-center justify-center min-h-[calc(100vh-64px)] bg-gray-50/50">
@@ -32,5 +43,13 @@ export default function Login() {
                 </p>
             </motion.div>
         </div>
+    );
+}
+
+export default function Login() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <LoginContent />
+        </Suspense>
     );
 }

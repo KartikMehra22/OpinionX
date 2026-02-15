@@ -1,17 +1,33 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
-const AuthContext = createContext({
+interface User {
+    id: number;
+    email: string;
+    name: string;
+    avatar?: string;
+    role: string;
+}
+
+interface AuthContextType {
+    user: User | null;
+    loading: boolean;
+    login: () => void;
+    logout: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType>({
     user: null,
     loading: true,
     login: () => { },
     logout: async () => { },
 });
 
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
@@ -44,9 +60,11 @@ export const AuthProvider = ({ children }) => {
         try {
             await fetch("http://localhost:5001/api/auth/logout", { method: "POST", credentials: "include" });
             setUser(null);
+            toast.success("Logged out successfully");
             router.push("/");
         } catch (error) {
             console.error("Logout failed", error);
+            toast.error("Failed to log out");
         }
     };
 
