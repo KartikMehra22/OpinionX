@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser(null);
             }
         } catch (error: any) {
-            // 401 is expected if the user is not logged in
+
             if (error.response?.status !== 401) {
                 console.error("Auth check failed", error);
             }
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const login = () => {
-        // API_BASE logic to ensure we redirect to the right backend
+
         const isProd = process.env.NODE_ENV === "production";
         const API_BASE = isProd
             ? process.env.NEXT_PUBLIC_BACKEND_SERVER_URL

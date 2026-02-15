@@ -18,7 +18,6 @@ model User {
   googleId  String? @unique
   name      String
   email     String  @unique
-  password  String?
   polls     Poll[]  @relation("CreatorPolls")
   votes     Vote[]  @relation("UserVotes")
   role      Role    @default(USER)
@@ -61,4 +60,12 @@ model Vote {
   @@unique([userId, optionId])
   @@index([pollId])
   @@index([userId])
+}
+
+model Session {
+  sid    String   @id
+  sess   Json
+  expire DateTime
+
+  @@index([expire], map: "IDX_session_expire")
 }

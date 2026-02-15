@@ -14,7 +14,7 @@ passport.use(
         async (accessToken, refreshToken, profile, done) => {
             try {
                 console.log("Google Strategy Callback:", profile.id, profile.emails[0].value);
-                // Check if user already exists
+
                 let user = await prisma.user.findUnique({
                     where: { googleId: profile.id },
                 });
@@ -52,5 +52,18 @@ passport.use(
         }
     )
 );
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id } });
+        done(null, user);
+    } catch (error) {
+        done(error, null);
+    }
+});
 
 module.exports = passport;
