@@ -69,7 +69,7 @@ const getPoll = async (req, res) => {
             options: poll.options.map(opt => ({
                 id: opt.id,
                 text: opt.text,
-                votes: opt._count.votes
+                voteCount: opt._count.votes
             })),
             totalVotes: poll._count.votes
         };
@@ -113,11 +113,11 @@ const votePoll = async (req, res) => {
             }
         });
 
-        res.json({ message: "Vote recorded successfully", vote });
+        res.json({ message: "Vote recorded", vote });
 
     } catch (error) {
         if (error.code === 'P2002') {
-            return res.status(400).json({ message: "You have already voted on this poll" });
+            return res.status(400).json({ message: "Already voted" });
         }
         console.error("Error voting:", error);
         res.status(500).json({ message: "Failed to record vote" });
