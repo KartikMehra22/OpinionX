@@ -2,12 +2,20 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const { signAccessToken, signRefreshToken } = require("../utils/jwt");
 
-const googleAuth = passport.authenticate("google", { scope: ["profile", "email"] });
+const googleAuth = passport.authenticate("google", { scope: ["profile", "email"], prompt: "select_account" });
 
 const googleCallback = (req, res, next) => {
     passport.authenticate("google", { session: false }, (err, user, info) => {
-        if (err) return next(err);
-        if (!user) return res.redirect(`${process.env.FRONTEND_SERVER_URL}/login?error=auth_failed`);
+        if (err) {
+            console.error("Auth Callback Error:", err);
+            return next(err);
+        }
+        if (!user) {
+            console.error("Auth Callback Failed: No user", info);
+            return res.redirect(`${process.env.FRONTEND_SERVER_URL}/login?error=auth_failed`);
+        }
+
+        console.log("Auth Callback Success: User", user.id);
 
         const accessToken = signAccessToken({ id: user.id, email: user.email, role: user.role });
         const refreshToken = signRefreshToken({ id: user.id, email: user.email, role: user.role });

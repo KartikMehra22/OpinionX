@@ -45,15 +45,9 @@ const Navbar = () => {
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-4">
-                                        <Link href="/login" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-                                            Log in
+                                        <Link href="/login" className="px-4 py-2 rounded-full bg-black text-white font-medium hover:bg-gray-800 transition-colors">
+                                            Sign In
                                         </Link>
-                                        <button
-                                            onClick={login}
-                                            className="px-4 py-2 rounded-full bg-black text-white font-medium hover:bg-gray-800 transition-colors"
-                                        >
-                                            Get Started
-                                        </button>
                                     </div>
                                 )}
                             </>
