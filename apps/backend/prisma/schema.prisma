@@ -12,11 +12,13 @@ enum Role {
   ADMIN
 }
 
+
 model User {
   id        Int     @id @default(autoincrement())
+  googleId  String? @unique
   name      String
   email     String  @unique
-  password  String
+  password  String?
   polls     Poll[]  @relation("CreatorPolls")
   votes     Vote[]  @relation("UserVotes")
   role      Role    @default(USER)
