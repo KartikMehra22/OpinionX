@@ -61,13 +61,15 @@ export default function Dashboard() {
                         You have created {polls.length} polls so far.
                     </p>
                 </div>
-                <Link
-                    href="/create"
-                    className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                >
-                    <Plus size={20} />
-                    Create New Poll
-                </Link>
+                {user?.role === "ADMIN" && (
+                    <Link
+                        href="/create"
+                        className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    >
+                        <Plus size={20} />
+                        Create New Poll
+                    </Link>
+                )}
             </motion.div>
 
             <section>

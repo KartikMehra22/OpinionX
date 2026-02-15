@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import Link from "next/link";
 import { Shield, Plus, Loader2, BarChart } from "lucide-react";
 import api from "../../utils/api";
 import PollGrid from "../../components/PollGrid";
@@ -86,6 +87,13 @@ export default function AdminPanel() {
                         <BarChart className="text-indigo-600" />
                         Global Activity Feed
                     </h2>
+                    <Link
+                        href="/create"
+                        className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    >
+                        <Plus size={20} />
+                        Create New Poll
+                    </Link>
                 </div>
                 <PollGrid
                     polls={polls}

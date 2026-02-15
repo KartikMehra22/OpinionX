@@ -8,7 +8,7 @@ router.get("/my-polls", authenticate, getMyPolls);
 router.get("/admin/all-polls", isAdmin, getAllPolls);
 router.get("/:id", getPoll);
 
-router.post("/", authenticate, createPoll);
+router.post("/", isAdmin, createPoll);
 router.post("/:id/vote", authenticate, votePoll);
 
 module.exports = router;

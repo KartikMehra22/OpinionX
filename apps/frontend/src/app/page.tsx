@@ -2,9 +2,12 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, BarChart2, Shield, Zap } from "lucide-react";
+import { ArrowRight, BarChart2, Shield, Zap, Layout } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function LandingPage() {
+  const { user, loading } = useAuth();
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -31,9 +34,15 @@ export default function LandingPage() {
               Join the next generation of polling. Create, vote, and analyze polls with real-time insights and a premium experience.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/login" className="px-8 py-4 bg-black text-white rounded-full font-bold text-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                Get Started <ArrowRight size={20} />
-              </Link>
+              {!loading && user ? (
+                <Link href="/dashboard" className="px-8 py-4 bg-black text-white rounded-full font-bold text-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                  Go to Dashboard <Layout size={20} />
+                </Link>
+              ) : (
+                <Link href="/login" className="px-8 py-4 bg-black text-white rounded-full font-bold text-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                  Get Started <ArrowRight size={20} />
+                </Link>
+              )}
               <Link href="#features" className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-bold text-lg hover:bg-gray-50 transition-all shadow-sm hover:shadow-md">
                 Learn More
               </Link>
