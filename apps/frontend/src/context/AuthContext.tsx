@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import api from "../utils/api";
 
 interface User {
     id: number;
@@ -37,15 +38,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const checkAuth = async () => {
         try {
-            const res = await fetch("http://localhost:5001/api/auth/me", { credentials: "include" });
-            if (res.ok) {
-                const data = await res.json();
-                setUser(data);
+            const res = await api.get("/api/auth/me");
+            if (res.data) {
+                setUser(res.data);
             } else {
                 setUser(null);
             }
-        } catch (error) {
-            console.error("Auth check failed", error);
+        } catch (error: any) {
+            // 401 is expected if the user is not logged in
+            if (error.response?.status !== 401) {
+                console.error("Auth check failed", error);
+            }
             setUser(null);
         } finally {
             setLoading(false);
@@ -53,14 +56,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const login = () => {
-        window.location.href = "http://localhost:5001/api/auth/google";
+        // API_BASE logic to ensure we redirect to the right backend
+        const isProd = process.env.NODE_ENV === "production";
+        const API_BASE = isProd
+            ? process.env.NEXT_PUBLIC_BACKEND_SERVER_URL
+            : process.env.NEXT_PUBLIC_BACKEND_LOCAL_URL;
+
+        window.location.href = `${API_BASE}/api/auth/google`;
     };
 
     const logout = async () => {
         try {
-            await fetch("http://localhost:5001/api/auth/logout", { method: "POST", credentials: "include" });
+            toast("Signing off...", { icon: "🔒" });
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            toast("Cleaning up session...", { icon: "🧹" });
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            await api.post("/api/auth/logout");
             setUser(null);
-            toast.success("Logged out successfully");
+            toast.success("See you soon! 👋");
             router.push("/");
         } catch (error) {
             console.error("Logout failed", error);
