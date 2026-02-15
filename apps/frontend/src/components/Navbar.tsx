@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { LogOut, User as UserIcon, Shield } from "lucide-react";
 
 const Navbar = () => {
     const { user, login, logout, loading } = useAuth();
@@ -24,20 +24,31 @@ const Navbar = () => {
                         {!loading && (
                             <>
                                 {user ? (
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-6">
+                                        <div className="hidden sm:flex items-center gap-4 border-r border-gray-200 pr-4">
+                                            <Link href="/dashboard" className="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
+                                                Dashboard
+                                            </Link>
+                                            {user.role === "ADMIN" && (
+                                                <Link href="/admin" className="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors flex items-center gap-1">
+                                                    <Shield size={14} className="text-indigo-600" />
+                                                    Admin
+                                                </Link>
+                                            )}
+                                        </div>
                                         <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                                            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 overflow-hidden shadow-sm">
                                                 {user.avatar ? (
-                                                    <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
+                                                    <img src={user.avatar} alt={user.name} className="w-8 h-8 object-cover" />
                                                 ) : (
                                                     <UserIcon size={18} />
                                                 )}
                                             </div>
-                                            <span className="hidden md:block font-medium text-gray-700">{user.name}</span>
+                                            <span className="hidden md:block font-bold text-gray-800 tracking-tight">{user.name}</span>
                                         </div>
                                         <button
                                             onClick={logout}
-                                            className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-500 transition-colors"
+                                            className="p-2.5 rounded-xl hover:bg-red-50 text-gray-400 hover:text-red-500 transition-all duration-200"
                                             title="Logout"
                                         >
                                             <LogOut size={20} />

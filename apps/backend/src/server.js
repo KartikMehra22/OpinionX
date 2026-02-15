@@ -8,7 +8,7 @@ const session = require("express-session");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.SERVER_PORT || 5001;
+const PORT = process.env.SERVER_PORT;
 
 app.use(express.json());
 app.use(cookieParser());

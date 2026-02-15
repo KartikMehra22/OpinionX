@@ -1,9 +1,11 @@
 const express = require("express");
-const { createPoll, getPoll, votePoll } = require("../controllers/pollController");
-const authenticate = require("../middlewares/authMiddleware");
+const { createPoll, getPoll, votePoll, getMyPolls, getAllPolls } = require("../controllers/pollController");
+const { authenticate, isAdmin } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
+router.get("/my-polls", authenticate, getMyPolls);
+router.get("/admin/all-polls", isAdmin, getAllPolls);
 router.get("/:id", getPoll);
 
 router.post("/", authenticate, createPoll);

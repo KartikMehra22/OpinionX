@@ -5,4 +5,11 @@ const authenticate = (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized: Please log in" });
 };
 
-module.exports = authenticate;
+const isAdmin = (req, res, next) => {
+    if (req.isAuthenticated() && req.user.role === "ADMIN") {
+        return next();
+    }
+    return res.status(403).json({ message: "Forbidden: Admin access required" });
+};
+
+module.exports = { authenticate, isAdmin };

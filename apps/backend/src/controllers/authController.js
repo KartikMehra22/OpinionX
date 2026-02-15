@@ -3,9 +3,12 @@ const passport = require("passport");
 const googleAuth = passport.authenticate("google", { scope: ["profile", "email"], prompt: "select_account" });
 
 const googleCallback = (req, res, next) => {
+    const isProd = process.env.NODE_ENV === "production";
+    const FRONTEND_URL = isProd ? process.env.FRONTEND_SERVER_URL : process.env.FRONTEND_LOCAL_URL;
+
     passport.authenticate("google", {
-        successRedirect: `${process.env.FRONTEND_SERVER_URL}/dashboard`,
-        failureRedirect: `${process.env.FRONTEND_SERVER_URL}/login?error=auth_failed`,
+        successRedirect: `${FRONTEND_URL}/dashboard`,
+        failureRedirect: `${FRONTEND_URL}/login?error=auth_failed`,
     })(req, res, next);
 };
 
