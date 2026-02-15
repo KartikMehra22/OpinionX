@@ -1,5 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../configs/prisma");
 
 const createPoll = async (req, res) => {
     try {
@@ -43,11 +42,11 @@ const getPoll = async (req, res) => {
             where: { id: pollId },
             include: {
                 creator: {
-                    select: { id: true, name: true, avatar: true }, // Assuming avatar exists or just name
+                    select: { id: true, name: true, avatar: true },
                 },
                 options: {
                     include: {
-                        votes: true, // we might want just count, but let's get full data for now or use _count
+                        votes: true,
                         _count: {
                             select: { votes: true }
                         }
@@ -63,7 +62,6 @@ const getPoll = async (req, res) => {
             return res.status(404).json({ message: "Poll not found" });
         }
 
-        // Transform data to cleaner format if needed
         const formattedPoll = {
             ...poll,
             options: poll.options.map(opt => ({
@@ -92,7 +90,6 @@ const votePoll = async (req, res) => {
             return res.status(400).json({ message: "Invalid poll ID or missing option ID" });
         }
 
-        // Verify option belongs to poll
         const option = await prisma.option.findFirst({
             where: {
                 id: optionId,
@@ -104,7 +101,6 @@ const votePoll = async (req, res) => {
             return res.status(400).json({ message: "Invalid option for this poll" });
         }
 
-        // Create vote
         const vote = await prisma.vote.create({
             data: {
                 userId,

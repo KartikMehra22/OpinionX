@@ -1,57 +1,23 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-require("dotenv").config();
+const corsMiddleware = require("./configs/cors");
 const passport = require("./configs/passport");
 const authRoutes = require("./routes/authRoutes");
 const pollRoutes = require("./routes/pollRoutes");
 const session = require("express-session");
-const pgSession = require("connect-pg-simple")(session);
-const { Pool } = require("pg");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 5001;
 
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
-const isProd = process.env.NODE_ENV === "production";
-const corsOptions = {
-  origin: isProd ? process.env.FRONTEND_SERVER_URL : process.env.FRONTEND_LOCAL_URL,
-  credentials: true,
-};
-
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors(corsOptions));
-
-// Session Configuration
-app.use(
-  session({
-    store: new pgSession({
-      pool: pool,
-      tableName: "Session", // Matches the Prisma model name if mapped, or handled by connector
-      createTableIfMissing: false, // We rely on Prisma to create the table
-    }),
-    secret: process.env.SESSION_SECRET || "supersecret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    },
-  })
-);
+app.use(corsMiddleware);
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/polls", pollRoutes);
 

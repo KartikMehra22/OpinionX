@@ -12,7 +12,6 @@ enum Role {
   ADMIN
 }
 
-
 model User {
   id        Int     @id @default(autoincrement())
   googleId  String? @unique
@@ -63,9 +62,8 @@ model Vote {
 }
 
 model Session {
-  sid    String   @id
-  sess   Json
-  expire DateTime
-
-  @@index([expire], map: "IDX_session_expire")
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt   DateTime
 }

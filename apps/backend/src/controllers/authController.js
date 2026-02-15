@@ -12,7 +12,7 @@ const googleCallback = (req, res, next) => {
 const logout = (req, res, next) => {
     req.logout((err) => {
         if (err) { return next(err); }
-        res.clearCookie("connect.sid"); // Clear session cookie
+        res.clearCookie("connect.sid");
         res.status(200).json({ message: "Logged out successfully" });
     });
 };
