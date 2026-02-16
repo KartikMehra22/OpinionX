@@ -8,66 +8,36 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-
-enum Role {
-  USER
-  ADMIN
-}
-
-model User {
-  id        Int     @id @default(autoincrement())
-  googleId  String? @unique
-  name      String
-  email     String  @unique
-  polls     Poll[]  @relation("CreatorPolls")
-  votes     Vote[]  @relation("UserVotes")
-  role      Role    @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Poll {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
-  creator     User     @relation("CreatorPolls", fields: [creatorId], references: [id])
-  creatorId   Int
-  options     Option[] @relation("PollOptions")
-  votes       Vote[]   @relation("PollVotes")
+  options     Option[]
+  votes       Vote[]
   isActive    Boolean  @default(true)
-  isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Option {
-  id     Int     @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   text   String
-  poll   Poll    @relation("PollOptions", fields: [pollId], references: [id])
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
   pollId Int
-  votes  Vote[]  @relation("OptionVotes")
+  votes  Vote[]
 }
 
 model Vote {
-  id        Int    @id @default(autoincrement())
-  user      User   @relation("UserVotes", fields: [userId], references: [id])
-  userId    Int
-  option    Option @relation("OptionVotes", fields: [optionId], references: [id])
+  id        Int      @id @default(autoincrement())
+  voterId   String
+  ipAddress String?
+  option    Option   @relation(fields: [optionId], references: [id], onDelete: Cascade)
   optionId  Int
-  poll      Poll   @relation("PollVotes", fields: [pollId], references: [id])
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
   pollId    Int
   createdAt DateTime @default(now())
 
-  @@unique([userId, pollId])
+  @@unique([pollId, voterId])
   @@index([pollId])
-  @@index([userId])
-}
-
-model Session {
-  sid    String   @id
-  sess   Json
-  expire DateTime
-
-  @@index([expire], map: "IDX_session_expire")
-  @@map("session")
+  @@index([voterId])
 }
