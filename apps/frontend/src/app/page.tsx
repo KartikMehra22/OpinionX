@@ -2,99 +2,127 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, BarChart2, Shield, Zap, Layout } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { ArrowRight, BarChart2, Shield, Zap } from "lucide-react";
 
 export default function LandingPage() {
-  const { user, loading } = useAuth();
-
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-32 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 opacity-70" />
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-200/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+    <div className="flex flex-col">
+      <section className="relative py-24 sm:py-32 overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-indigo-100/60 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-purple-100/40 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-8">
-              Your Opinions, <br />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-full mb-6 border border-indigo-100">
+              <Zap size={12} /> Real-time polling
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-6">
+              Create polls.{" "}
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Values that Matter.
+                Get instant answers.
               </span>
             </h1>
-            <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto mb-10">
-              Join the next generation of polling. Create, vote, and analyze polls with real-time insights and a premium experience.
+
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+              Share a link, collect votes, and watch results update live. Simple, fast, and fair.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              {!loading && user ? (
-                <Link href="/dashboard" className="px-8 py-4 bg-black text-white rounded-full font-bold text-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                  Go to Dashboard <Layout size={20} />
-                </Link>
-              ) : (
-                <Link href="/login" className="px-8 py-4 bg-black text-white rounded-full font-bold text-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                  Get Started <ArrowRight size={20} />
-                </Link>
-              )}
-              <Link href="#features" className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-bold text-lg hover:bg-gray-50 transition-all shadow-sm hover:shadow-md">
-                Learn More
+
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <Link
+                href="/create"
+                className="px-6 py-3 bg-gray-900 text-white rounded-xl font-semibold text-sm hover:bg-gray-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/10"
+              >
+                Create Poll <ArrowRight size={16} />
               </Link>
+              <a
+                href="#features"
+                className="px-6 py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all"
+              >
+                How it works
+              </a>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose OpinionX?</h2>
-            <p className="text-lg text-gray-600">Built for speed, security, and scale.</p>
+      <section id="features" className="py-20 bg-white border-t border-gray-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-14">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">Built for real decisions</h2>
+            <p className="text-gray-500">Everything you need to run fair, transparent polls.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
               {
-                icon: <Zap className="w-8 h-8 text-indigo-600" />,
-                title: "Real-time Updates",
-                description: "See votes roll in instantly with our socket-powered engine.",
+                icon: <Zap className="w-5 h-5" />,
+                color: "bg-amber-50 text-amber-600",
+                title: "Live Results",
+                desc: "Votes appear instantly via WebSockets. No refresh needed.",
               },
               {
-                icon: <Shield className="w-8 h-8 text-purple-600" />,
-                title: "Secure & Anonymous",
-                description: "Your data is encrypted and your privacy is our top priority.",
+                icon: <Shield className="w-5 h-5" />,
+                color: "bg-indigo-50 text-indigo-600",
+                title: "Fair Voting",
+                desc: "Smart browser checks + database constraints prevent double voting.",
               },
               {
-                icon: <BarChart2 className="w-8 h-8 text-pink-600" />,
-                title: "Advanced Analytics",
-                description: "Deep dive into polling data with comprehensive charts and graphs.",
+                icon: <BarChart2 className="w-5 h-5" />,
+                color: "bg-emerald-50 text-emerald-600",
+                title: "Persistent Data",
+                desc: "All polls and votes are stored in PostgreSQL. Nothing is lost.",
               },
-            ].map((feature, index) => (
+            ].map((f, i) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="p-8 rounded-3xl bg-gray-50 border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+                transition={{ delay: i * 0.1 }}
+                className="p-6 rounded-2xl bg-gray-50/80 border border-gray-100 hover:border-gray-200 transition-all"
               >
-                <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6">
-                  {feature.icon}
+                <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center mb-4`}>
+                  {f.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-base font-bold text-gray-900 mb-1.5">{f.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+
+      <section className="py-16 border-t border-gray-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-3 gap-6 text-center">
+            {[
+              { value: "Real-time", label: "Vote updates" },
+              { value: "Anonymous", label: "No sign-up needed" },
+              { value: "Persistent", label: "PostgreSQL backed" },
+            ].map((s, i) => (
+              <div key={i}>
+                <div className="text-xl font-extrabold text-gray-900">{s.value}</div>
+                <div className="text-xs text-gray-400 mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <footer className="py-8 border-t border-gray-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <span className="text-sm text-gray-400">
+            © 2026 OpinionX. Built with Next.js, Express & Socket.io
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }
