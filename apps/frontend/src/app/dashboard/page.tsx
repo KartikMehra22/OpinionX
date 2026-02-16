@@ -1,27 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { Plus, Layout } from "lucide-react";
+import { Plus, BarChart2 } from "lucide-react";
 import Link from "next/link";
 import api from "../../utils/api";
 import PollGrid from "../../components/PollGrid";
 import { motion } from "framer-motion";
 
 export default function Dashboard() {
-    const { user, loading: authLoading } = useAuth();
     const [polls, setPolls] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (user) {
-            fetchMyPolls();
-        }
-    }, [user]);
+        fetchAllPolls();
+    }, []);
 
-    const fetchMyPolls = async () => {
+    const fetchAllPolls = async () => {
         try {
-            const res = await api.get("/api/polls/my-polls");
+            const res = await api.get("/api/polls/all");
             setPolls(res.data);
         } catch (error) {
             console.error("Failed to fetch polls", error);
@@ -30,14 +26,15 @@ export default function Dashboard() {
         }
     };
 
-    if (authLoading || loading) {
+    if (loading) {
         return (
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="animate-pulse space-y-8">
-                    <div className="h-12 bg-gray-200 rounded-full w-48"></div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {[1, 2, 3].map(i => (
-                            <div key={i} className="h-64 bg-gray-200 rounded-3xl"></div>
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+                <div className="animate-pulse space-y-6">
+                    <div className="h-8 bg-gray-200 rounded-lg w-48"></div>
+                    <div className="h-4 bg-gray-100 rounded w-64"></div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                        {[1, 2, 3, 4, 5, 6].map(i => (
+                            <div key={i} className="h-32 bg-gray-100 rounded-xl"></div>
                         ))}
                     </div>
                 </div>
@@ -46,41 +43,34 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
             <motion.div
-                initial={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0, y: -12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6"
+                className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4"
             >
                 <div>
-                    <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
-                        Welcome back, <span className="text-indigo-600">{user?.name}</span>!
+                    <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                        Active Polls
                     </h1>
-                    <p className="text-gray-500 flex items-center gap-2">
-                        <Layout size={18} />
-                        You have created {polls.length} polls so far.
+                    <p className="text-sm text-gray-400 flex items-center gap-1.5">
+                        <BarChart2 size={14} />
+                        {polls.length} live poll{polls.length !== 1 ? "s" : ""}
                     </p>
                 </div>
-                {user?.role === "ADMIN" && (
-                    <Link
-                        href="/create"
-                        className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                    >
-                        <Plus size={20} />
-                        Create New Poll
-                    </Link>
-                )}
+                <Link
+                    href="/create"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all shadow-sm"
+                >
+                    <Plus size={16} />
+                    New Poll
+                </Link>
             </motion.div>
 
-            <section>
-                <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2">
-                    My Polls
-                </h2>
-                <PollGrid
-                    polls={polls}
-                    emptyMessage="You haven't created any polls yet. Start by creating your first poll!"
-                />
-            </section>
+            <PollGrid
+                polls={polls}
+                emptyMessage="No polls yet. Be the first to start a conversation!"
+            />
         </div>
     );
 }
