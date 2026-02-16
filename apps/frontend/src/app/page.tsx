@@ -117,7 +117,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="py-8 border-t border-gray-100">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex justify-center items-center">
           <span className="text-sm text-gray-400">
             © 2026 OpinionX. Built with Next.js, Express & Socket.io
           </span>
