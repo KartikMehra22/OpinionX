@@ -2,8 +2,6 @@
 
 OpinionX is a high-performance, real-time polling platform designed for speed, anonymity, and seamless interaction. It allows anyone to create polls and collect instant feedback without the friction of authentication.
 
-![OpinionX Banner](https://images.unsplash.com/photo-1540910419892-f0c74b0e8966?q=80&w=2070&auto=format&fit=crop)
-
 ## 🚀 Key Features
 
 - **Anonymous Polling**: No sign-up required. Users are tracked via secure, persistent `voterId` cookies.
