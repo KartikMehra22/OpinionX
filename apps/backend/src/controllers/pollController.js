@@ -12,7 +12,6 @@ const createPoll = async (req, res) => {
             data: {
                 title,
                 description,
-                creatorId: req.user.id,
                 options: {
                     create: options.map((text) => ({ text })),
                 },
@@ -41,12 +40,8 @@ const getPoll = async (req, res) => {
         const poll = await prisma.poll.findUnique({
             where: { id: pollId },
             include: {
-                creator: {
-                    select: { id: true, name: true, avatar: true },
-                },
                 options: {
                     include: {
-                        votes: true,
                         _count: {
                             select: { votes: true }
                         }
@@ -84,7 +79,12 @@ const votePoll = async (req, res) => {
         const { id } = req.params;
         const { optionId } = req.body;
         const pollId = parseInt(id);
-        const userId = req.user.id;
+        const voterId = req.cookies.voterId;
+        const ipAddress = req.ip || req.connection.remoteAddress;
+
+        if (!voterId) {
+            return res.status(400).json({ message: "Voter ID missing (cookies required)" });
+        }
 
         if (isNaN(pollId) || !optionId) {
             return res.status(400).json({ message: "Invalid poll ID or missing option ID" });
@@ -103,55 +103,31 @@ const votePoll = async (req, res) => {
 
         const vote = await prisma.vote.create({
             data: {
-                userId,
+                voterId,
+                ipAddress: String(ipAddress),
                 pollId,
                 optionId
             }
         });
 
+        const io = req.app.get("io");
+        io.to(`poll_${pollId}`).emit("voteUpdate", { pollId });
+
         res.json({ message: "Vote recorded", vote });
 
     } catch (error) {
         if (error.code === 'P2002') {
-            return res.status(400).json({ message: "Already voted" });
+            return res.status(400).json({ message: "You have already voted on this poll" });
         }
         console.error("Error voting:", error);
         res.status(500).json({ message: "Failed to record vote" });
     }
 };
 
-const getMyPolls = async (req, res) => {
-    try {
-        const polls = await prisma.poll.findMany({
-            where: { creatorId: req.user.id, isDeleted: false },
-            include: {
-                _count: {
-                    select: { votes: true }
-                }
-            },
-            orderBy: { createdAt: 'desc' }
-        });
-
-        const formattedPolls = polls.map(poll => ({
-            ...poll,
-            totalVotes: poll._count.votes
-        }));
-
-        res.json(formattedPolls);
-    } catch (error) {
-        console.error("Error fetching user polls:", error);
-        res.status(500).json({ message: "Failed to fetch your polls" });
-    }
-};
-
 const getAllPolls = async (req, res) => {
     try {
         const polls = await prisma.poll.findMany({
-            where: { isDeleted: false },
             include: {
-                creator: {
-                    select: { id: true, name: true, email: true }
-                },
                 _count: {
                     select: { votes: true }
                 }
@@ -175,6 +151,5 @@ module.exports = {
     createPoll,
     getPoll,
     votePoll,
-    getMyPolls,
     getAllPolls
 };

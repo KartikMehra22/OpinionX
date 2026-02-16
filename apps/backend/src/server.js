@@ -1,52 +1,63 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
 const corsMiddleware = require("./configs/cors");
-const passport = require("./configs/passport");
-const authRoutes = require("./routes/authRoutes");
 const pollRoutes = require("./routes/pollRoutes");
-const session = require("express-session");
+const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.SERVER_PORT;
+const PORT = process.env.SERVER_PORT || 5001;
+const isProd = process.env.NODE_ENV === "production";
+
+if (isProd) {
+  app.set("trust proxy", 1);
+}
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(corsMiddleware);
 
-const pgSession = require("connect-pg-simple")(session);
-
-app.use(
-  session({
-    store: new pgSession({
-      conString: process.env.DIRECT_URL,
-      tableName: "session",
-    }),
-    secret: process.env.SESSION_SECRET || "supersecretkey",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      secure: process.env.NODE_ENV === "production",
+app.use((req, res, next) => {
+  if (!req.cookies.voterId) {
+    const voterId = uuidv4();
+    res.cookie("voterId", voterId, {
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    },
-  })
-);
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      maxAge: 365 * 24 * 60 * 60 * 1000,
+    });
+    req.cookies.voterId = voterId;
+  }
+  next();
+});
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use("/api/auth", authRoutes);
 app.use("/api/polls", pollRoutes);
 
 app.get("/", (req, res) => {
-  res.status(200).send("<h1>Backend Running Successfully 🚀</h1>");
+  res.status(200).send("<h1>OpinionX Backend (Anonymous) 🚀</h1>");
 });
 
-app.listen(PORT, () => {
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: [
+      process.env.FRONTEND_LOCAL_URL,
+      process.env.FRONTEND_SERVER_URL,
+    ].filter(Boolean),
+    credentials: true,
+  },
+});
+
+app.set("io", io);
+
+io.on("connection", (socket) => {
+  socket.on("joinPoll", (pollId) => {
+    socket.join(`poll_${pollId}`);
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`DEBUG: NODE_ENV = ${process.env.NODE_ENV}`);
-  console.log(`✅ Local Backend URL: ${process.env.BACKEND_LOCAL_URL}`);
-  console.log(`✅ Deployed Backend URL: ${process.env.BACKEND_SERVER_URL}`);
 });
