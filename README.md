@@ -28,7 +28,7 @@ OpinionX is a high-performance, real-time polling platform designed for speed, a
 - **Real-Time**: [Socket.io](https://socket.io/)
 - **Voter Tracking**: UUID + Cookie-based identification
 
-## 📦 Project Structure
+##  Project Structure
 
 ```text
 OpinionX/
@@ -42,7 +42,7 @@ OpinionX/
 └── package.json      # PNPM Workspaces configuration
 ```
 
-## ⚙️ Setup & Installation
+##  Setup & Installation
 
 ### Prerequisites
 - [PNPM](https://pnpm.io/) (v10.29.3+)
@@ -91,7 +91,7 @@ OpinionX/
    pnpm --filter backend dev
    ```
 
-## 🛡 License
+##  License
 This project is licensed under the ISC License.
 
 ---
